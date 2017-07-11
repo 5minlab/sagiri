@@ -23,18 +23,25 @@ namespace Assets.Sagiri.Editor {
         }
 
         string[] GetScripts() {
-            var dirs = new string[]
+            var dirs = new List<string>()
             {
-                "Assets/Sagiri"
+                "Assets/Sagiri",
+                "Assets/Sagiri/Prefabs",
             };
-            var founds = AssetDatabase.FindAssets("", dirs);
-            var list = new List<string>();
+            var founds = AssetDatabase.FindAssets("", dirs.ToArray());
+            var set = new HashSet<string>();
             foreach (var guid in founds) {
                 var assetPath = AssetDatabase.GUIDToAssetPath(guid);
-                if (assetPath.EndsWith(".cs")) {
-                    list.Add(assetPath);
+                var ext = Path.GetExtension(assetPath);
+                var dirname = Path.GetDirectoryName(assetPath);
+                if (dirs.Contains(dirname) && ext != "") {
+                    set.Add(assetPath);
                 }
             }
+
+            var list = new List<string>();
+            list.AddRange(set);
+            list.Sort();
             return list.ToArray();
         }
 
@@ -44,14 +51,18 @@ namespace Assets.Sagiri.Editor {
                 "Assets/StreamingAssets/Sagiri",
             };
             var founds = AssetDatabase.FindAssets("", dirs);
-            var list = new List<string>();
+            var set = new HashSet<string>();
             foreach (var guid in founds) {
                 var assetPath = AssetDatabase.GUIDToAssetPath(guid);
                 var ext = Path.GetExtension(assetPath);
                 if (ext == ".html" || ext == ".ico" || ext == ".js" || ext == ".css") {
-                    list.Add(assetPath);
+                    set.Add(assetPath);
                 }
             }
+
+            var list = new List<string>();
+            list.AddRange(set);
+            list.Sort();
             return list.ToArray();
         }
     }
