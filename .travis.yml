@@ -1,0 +1,27 @@
+sudo: required
+
+os: osx
+osx_image: xcode8.3
+
+cache:
+  directories:
+  - scripts/unity-installers/
+
+before_install:
+  - chmod a+x ./*.sh
+  - chmod a+x ./scripts/*.sh
+  - mkdir -p scripts/unity-installers/
+
+install:
+  # unity editor
+  - cd scripts; ./install.sh editor; cd -
+  
+script:
+  - echo "todo"
+
+notifications:
+  email: false
+
+branches:
+  only:
+  - master
