@@ -519,6 +519,13 @@ physicsCheckbox.addEventListener('change', function (e) {
   else { showOrHideLogEntry("physics", this.checked); }
 });
 
+document.querySelector('#reset-log-entries').onclick = function() {
+  populateLogs([]);
+  updateCounts();
+  updateEntriesList();
+  setCheckboxesOn();
+}
+
 function updateConsole(callback) {
   fetch('/console/out').then(function(res) {
     if(res.ok) {
