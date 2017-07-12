@@ -50,7 +50,7 @@ namespace Assets.Sagiri {
         // FIXME add an api to register new types
         private static Dictionary<string, string> fileTypes = new Dictionary<string, string>
         {
-            { "js",   "application/javascript"},
+            {"js",   "application/javascript"},
             {"json", "application/json"},
             {"jpg",  "image/jpeg" },
             {"jpeg", "image/jpeg"},
@@ -67,7 +67,7 @@ namespace Assets.Sagiri {
             fileRoot = Path.Combine(Application.streamingAssetsPath, "Sagiri");
 
             // Start server
-            Debug.Log("Starting Sagiri Server on port : " + Port);
+            Debug.Log("Starting Sagiri Server on " + Network.player.ipAddress + ":" + Port);
             listener = new HttpListener();
             listener.Prefixes.Add("http://*:" + Port + "/");
             listener.Start();
