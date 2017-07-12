@@ -195,21 +195,13 @@ namespace Assets.Sagiri {
         void OnEnable() {
             if (RegisterLogCallback) {
                 // Capture Console Logs
-#if UNITY_4
-        Application.RegisterLogCallback(Console.LogCallback);
-#else
                 Application.logMessageReceived += Console.LogCallback;
-#endif
             }
         }
 
         void OnDisable() {
             if (RegisterLogCallback) {
-#if UNITY_4
-        Application.RegisterLogCallback(null);
-#else
                 Application.logMessageReceived -= Console.LogCallback;
-#endif
             }
         }
 

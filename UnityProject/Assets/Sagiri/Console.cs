@@ -14,13 +14,16 @@ namespace Assets.Sagiri {
         public string[] args;
     }
 
-    struct LogRow {
+    struct LogEntry {
         public readonly string log;
+        public readonly string stacktrace;
+
         public readonly LogType level;
         public readonly DateTime time;
 
-        public LogRow(string log, LogType lv, DateTime time) {
+        public LogEntry(string log, string stacktrace, LogType lv, DateTime time) {
             this.log = log;
+            this.stacktrace = stacktrace;
             this.level = lv;
             this.time = time;
         }
@@ -28,12 +31,14 @@ namespace Assets.Sagiri {
         public string ToJson() {
             var sb = new StringBuilder();
             sb.Append("{");
-            // 2012-04-23T18:25:43.511Z
-            sb.AppendFormat(@"""time"":""{0}""", time.ToString("yyyy-MM-dd HH:mm:ss z"));
+            // "2016.09.24.04.23.04"
+            sb.AppendFormat(@"""tm"":""{0}""", time.ToString("yyyy.MM.dd.HH.mm.ss"));
             sb.Append(",");
-            sb.AppendFormat(@"""lv"":""{0}""", level.ToString());
+            sb.AppendFormat(@"""t"":""{0}""", level.ToString());
             sb.Append(",");
-            sb.AppendFormat(@"""log"":""{0}""", log.Replace("\n", "\\n"));
+            sb.AppendFormat(@"""l"":""{0}""", log.Replace("\n", "\\n"));
+            sb.Append(",");
+            sb.AppendFormat(@"""s"":""{0}""", stacktrace.Replace("\n", "\\n"));
             sb.Append("}");
             return sb.ToString();
         }
@@ -52,13 +57,13 @@ namespace Assets.Sagiri {
 
         private static Console instance;
         private CommandTree m_commands;
-        private List<LogRow> m_output;
+        private List<LogEntry> m_output;
         private List<string> m_history;
         private Queue<QueuedCommand> m_commandQueue;
 
         private Console() {
             m_commands = new CommandTree();
-            m_output = new List<LogRow>();
+            m_output = new List<LogEntry>();
             m_history = new List<string>();
             m_commandQueue = new Queue<QueuedCommand>();
 
@@ -128,10 +133,10 @@ namespace Assets.Sagiri {
 
         /* Logs string to output */
         public static void Log(string str) {
-            Log(str, LogType.Log, DateTime.Now);
+            Log(str, "", LogType.Log, DateTime.Now);
         }
-        public static void Log(string str, LogType lv, DateTime time) {
-            Instance.m_output.Add(new LogRow(str, lv, time));
+        public static void Log(string str, string stacktrace, LogType lv, DateTime time) {
+            Instance.m_output.Add(new LogEntry(str, stacktrace, lv, time));
             if (Instance.m_output.Count > MAX_LINES)
                 Instance.m_output.RemoveAt(0);
         }
@@ -139,10 +144,7 @@ namespace Assets.Sagiri {
         /* Callback for Unity logging */
         public static void LogCallback(string logString, string stackTrace, LogType type) {
             var now = DateTime.Now;
-            Console.Log(logString, type, now);
-            if (type != LogType.Log) {
-                Console.Log(stackTrace, type, now);
-            }
+            Console.Log(logString, stackTrace, type, now);
         }
 
         /* Returns the output */
@@ -231,6 +233,7 @@ namespace Assets.Sagiri {
         [Route("^/console/out$")]
         public static void Output(RequestContext context) {
             context.Response.WriteString(Console.Output(), "application/json");
+            Console.Clear();
         }
 
         [Route("^/console/run$")]
