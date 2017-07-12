@@ -11,10 +11,19 @@ public class Main : MonoBehaviour {
         Debug.Log("OnDestory");
     }
 
+    int rightClickCount = 0;
+
     // Update is called once per frame
     void Update() {
-        if (Input.GetButtonDown("Fire1")) {
+        if (Input.GetMouseButtonDown(0)) {
+            // left
             PrintLog();
+        }
+
+        if(Input.GetMouseButtonDown(1)) {
+            // right
+            rightClickCount += 1;
+            Debug.LogFormat("right click : {0}", rightClickCount);
         }
     }
 

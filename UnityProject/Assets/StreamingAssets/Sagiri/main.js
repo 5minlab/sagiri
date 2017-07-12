@@ -9,6 +9,7 @@ var title = document.getElementById('title');
 var startTime = document.getElementById('startTime');
 var endTime = document.getElementById('endTime');
 var largeNotice = document.getElementById('large');
+var lastLogID = document.getElementById('last-log-id');
 
 var counts = {
   assert: 0,
@@ -519,43 +520,69 @@ physicsCheckbox.addEventListener('change', function (e) {
   else { showOrHideLogEntry("physics", this.checked); }
 });
 
+// reset
 document.querySelector('#reset-log-entries').onclick = function() {
   populateLogs([]);
   updateCounts();
   updateEntriesList();
   setCheckboxesOn();
+
+  lastUniqueLogId = 0;
+  lastLogID.innerHTML = lastUniqueLogId;
+}
+
+var lastUniqueLogId = 0;
+
+function handleReceivedLogs(data) {
+  console.time("/console/out load()");
+
+  // 로그를 역순으로 추가
+  // 최신 로그가 위에 있는게 읽기 쉬울거같아서?
+  for(var i = 0 ; i < data.length ; i++) {
+    var log = data[i];
+    if(log.id > lastUniqueLogId) {
+      prependLog(log);
+    }
+  }
+
+  title.textContent = 'sagiri';
+  updateCounts();
+  updateEntriesList();
+  setCheckboxesOn();
+
+  // 마지막으로 받은 log id 갱신
+  for(var i = 0 ; i < data.length ; i++) {
+    var log = data[i];
+    if(log.id > lastUniqueLogId) {
+      lastUniqueLogId = log.id;
+    }
+  }
+  lastLogID.innerHTML = lastUniqueLogId;
+
+  console.timeEnd("/console/out load()");
 }
 
 function updateConsole(callback) {
-  fetch('/console/out').then(function(res) {
+  var path = '/console/out';
+  var qs = 'last=' + lastUniqueLogId;
+  var url = path + '?' + qs;
+
+  fetch(url).then(function(res) {
     if(res.ok) {
       res.json().then(function(data) {
         if(data.length > 0) {
-          console.time("/console/out load()");
-
-          // 로그를 역순으로 추가
-          // 최신 로그가 위에 있는게 읽기 쉬울거같아서?
-          for(var i = 0 ; i < data.length ; i++) {
-            var log = data[i];
-            prependLog(log);
-          }
-
-          title.textContent = 'sagiri';
-          updateCounts();
-          updateEntriesList();
-          setCheckboxesOn();
-
-          console.timeEnd("/console/out load()");
+          handleReceivedLogs(data);
         }
       });
-
     } else {
       console.log("/console/out response error: ", res.status);
     }
+  }).then(function() {
+    window.setTimeout(function() { updateConsole(null); }, 500);
   }).catch(function(e) {
     //console.log("/console/out fetch failed:", e);
-  });
+    window.setTimeout(function() { updateConsole(null); }, 500);
+  })
 }
 
-// Poll to update the console output
-window.setInterval(function () { updateConsole(null) }, 500);
+window.setTimeout(function() { updateConsole(null); }, 500);

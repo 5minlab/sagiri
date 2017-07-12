@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -12,36 +11,6 @@ namespace Assets.Sagiri {
     struct QueuedCommand {
         public CommandAttribute command;
         public string[] args;
-    }
-
-    struct LogEntry {
-        public readonly string log;
-        public readonly string stacktrace;
-
-        public readonly LogType level;
-        public readonly DateTime time;
-
-        public LogEntry(string log, string stacktrace, LogType lv, DateTime time) {
-            this.log = log;
-            this.stacktrace = stacktrace;
-            this.level = lv;
-            this.time = time;
-        }
-
-        public string ToJson() {
-            var sb = new StringBuilder();
-            sb.Append("{");
-            // "2016.09.24.04.23.04"
-            sb.AppendFormat(@"""tm"":""{0}""", time.ToString("yyyy.MM.dd.HH.mm.ss"));
-            sb.Append(",");
-            sb.AppendFormat(@"""t"":""{0}""", level.ToString());
-            sb.Append(",");
-            sb.AppendFormat(@"""l"":""{0}""", log.Replace("\n", "\\n"));
-            sb.Append(",");
-            sb.AppendFormat(@"""s"":""{0}""", stacktrace.Replace("\n", "\\n"));
-            sb.Append("}");
-            return sb.ToString();
-        }
     }
 
     public class Console {
@@ -147,21 +116,6 @@ namespace Assets.Sagiri {
             Console.Log(logString, stackTrace, type, now);
         }
 
-        /* Returns the output */
-        public static string Output() {
-            var sb = new StringBuilder();
-            sb.Append("[");
-            for (int i = 0; i < Instance.m_output.Count; i++) {
-                var r = Instance.m_output[i];
-                sb.Append(r.ToJson());
-                if (i < Instance.m_output.Count - 1) {
-                    sb.Append(",");
-                }
-            }
-            sb.Append("]");
-            return sb.ToString();
-        }
-
         /* Register a new console command */
         public static void RegisterCommand(string command, string desc, CommandAttribute.Callback callback, bool runOnMainThread = true) {
             if (command == null || command.Length == 0) {
@@ -229,11 +183,29 @@ namespace Assets.Sagiri {
                 m_history.RemoveAt(m_history.Count - 1);
         }
 
+
+        readonly LogEntryListJsonBuilder jsonBuilder = new LogEntryListJsonBuilder();
+
         // Our routes
         [Route("^/console/out$")]
         public static void Output(RequestContext context) {
-            context.Response.WriteString(Console.Output(), "application/json");
-            Console.Clear();
+            // 로그를 어디부터 이어서 받을지 정할수 있도록
+            // 매번 전체 로그를 보낼 필요는 없을것이다
+            var last = context.Request.QueryString.Get("last");
+            int lastId = 0;
+            if(!int.TryParse(last, out lastId)) {
+                lastId = 0;
+            }
+
+            // 필요한것만 내려주도록
+            instance.jsonBuilder.Clear();
+            foreach(var r in Instance.m_output) {
+                if(r.uid > lastId) {
+                    instance.jsonBuilder.Add(r);
+                }
+            }
+            var json = instance.jsonBuilder.Build();
+            context.Response.WriteString(json, "application/json");
         }
 
         [Route("^/console/run$")]
