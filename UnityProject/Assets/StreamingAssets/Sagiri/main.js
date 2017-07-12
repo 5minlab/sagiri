@@ -181,6 +181,32 @@ function populateLogs(jsonFile) {
   console.timeEnd("populateLogs()");
 }//populateLogs
 
+
+function prependLog(log) {
+  console.time("prependLog()");
+
+  var type = log.t.toLowerCase();
+
+  if(counts[type] == undefined) {
+    counts[type] = 1;
+  } else {
+    counts[type] = ++counts[type];
+  }
+
+  var entry = document.createElement('div');
+  entry.classList.add('entry', type);
+  entry.classList.add('hidden');
+  var time = log.tm ? new Date(log.tm.substr(0, 10).replace(/\./g, '-') + "T" + log.tm.substr(11, 2) + ":" + log.tm.substr(14, 2) + ":" + log.tm.substr(17, 2)).toLocaleString() : "";
+
+  var inner = '<span class="timestamp">' + time + '</span>' +
+      '<span class="message"><svg class="icon"><use xlink:href="#' + type + 'Icon" /></svg><button class="stackBtn" onclick="openCloseStack(this)">Stack</button>' + log.l + '</span>' +
+      '<span class="stack hidden">' + log.s.replace(/\n/gi, "<br>") + '</span>';
+  entry.innerHTML = inner;
+  mainPanel.insertBefore(entry, mainPanel.firstChild);
+
+  console.timeEnd("prependLog()");
+}
+
 // Update counts, hide empty lists
 function updateCounts() {
   console.time("updateCounts()");
@@ -493,21 +519,25 @@ physicsCheckbox.addEventListener('change', function (e) {
   else { showOrHideLogEntry("physics", this.checked); }
 });
 
-var consoleLogs = [];
 function updateConsole(callback) {
   fetch('/console/out').then(function(res) {
     if(res.ok) {
       res.json().then(function(data) {
         if(data.length > 0) {
-          consoleLogs = consoleLogs.concat(data);
-
           console.time("/console/out load()");
 
+          // 로그를 역순으로 추가
+          // 최신 로그가 위에 있는게 읽기 쉬울거같아서?
+          for(var i = 0 ; i < data.length ; i++) {
+            var log = data[i];
+            prependLog(log);
+          }
+
           title.textContent = 'sagiri';
-          populateLogs(consoleLogs);
           updateCounts();
           updateEntriesList();
           setCheckboxesOn();
+
           console.timeEnd("/console/out load()");
         }
       });

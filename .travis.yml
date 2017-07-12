@@ -17,7 +17,11 @@ install:
   - cd scripts; ./install.sh editor; cd -
   
 script:
-  - echo "todo"
+  - ./export_package.sh
+  - ls -al ./dist
+  
+after_script:
+  - cat export.log
 
 notifications:
   email: false
