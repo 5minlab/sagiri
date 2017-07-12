@@ -17,7 +17,7 @@ Use [Unity-File-Debug][Unity-File-Debug] as log viewer.
 * Capture Unity log messages and stack traces
 
 ## How to use
-1. Import [latest release's package](https://github.com/5minlab/sagiri) into your project.
+1. Import [latest release's package](https://github.com/5minlab/sagiri/releases) into your project.
 2. Move the prefab `SagiriServer` into your scene
 3. Set the port on `SagiriServer` game object. (default value is 55055)
 4. Run the game and connect to http://localhost:55055 with your browser.
