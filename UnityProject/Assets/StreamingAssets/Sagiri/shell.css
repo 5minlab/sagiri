@@ -1,4 +1,6 @@
-textarea {resize:none;}
+textarea {
+  resize:none;
+}
 
 body.console {
   background-color:black;
@@ -7,10 +9,20 @@ textarea.console {
   width:100%;
   background-color:#383838;
   color:#F0F0F0;
-  font-size:14px;
-  font-family: "Courier New", Courier, monospace;
-
+  font-size: 14px;
+  font-family: "Lucida Console", Monaco, monospace;
+  line-height: 16px;
 }
+
+h1 {
+  margin: 5px;
+}
+a, a:visited, a:hover {
+  text-decoration: none;
+  color: #fff;
+  font-size: 20px;
+}
+
 #output {
   height:500px;
 }

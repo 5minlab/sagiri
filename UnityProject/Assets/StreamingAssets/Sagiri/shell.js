@@ -84,6 +84,9 @@ function complete(command) {
   });
 }
 
+// 최초 1번 데이터 가져오기
+updateConsole(null);
+
 inputNode.onkeydown = function (e) {
   if (e.keyCode == 13) { // Enter
     // we don't want a line break in the console
