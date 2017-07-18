@@ -206,7 +206,7 @@ namespace Assets.Sagiri {
         }
 
         void Update() {
-            Console.Update();
+            Shell.Update();
         }
 
         void ListenerCallback(IAsyncResult result) {

@@ -552,7 +552,7 @@ document.querySelector('#reset-log-entries').onclick = function() {
 var lastUniqueLogId = 0;
 
 function handleReceivedLogs(data) {
-  console.time("/console/out load()");
+  console.time("handleReceivedLogs load()");
 
   // 로그를 역순으로 추가
   // 최신 로그가 위에 있는게 읽기 쉬울거같아서?
@@ -577,11 +577,11 @@ function handleReceivedLogs(data) {
   }
   lastLogID.innerHTML = lastUniqueLogId;
 
-  console.timeEnd("/console/out load()");
+  console.timeEnd("handleReceivedLogs load()");
 }
 
 function updateConsole(callback) {
-  var path = '/console/out';
+  var path = '/console/fetch';
   var qs = 'last=' + lastUniqueLogId;
   var url = path + '?' + qs;
 
