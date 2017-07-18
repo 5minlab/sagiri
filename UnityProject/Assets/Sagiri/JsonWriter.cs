@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Assets.Sagiri {
     interface IJsonSerializable {
-        string ToJson();
+        void AppendJson(StringBuilder sb);
     }
 
     public class JsonString : IJsonSerializable {
@@ -12,13 +12,11 @@ namespace Assets.Sagiri {
         public JsonString(string val) {
             this.val = val;
         }
-        public string ToJson() {
+        public void AppendJson(StringBuilder sb) {
             var content = Filter(val);
-            var sb = new StringBuilder();
             sb.Append("\"");
             sb.Append(content);
             sb.Append("\"");
-            return sb.ToString();
         }
 
         struct ReplaceTuple {
@@ -59,8 +57,8 @@ namespace Assets.Sagiri {
         public JsonInt(int val) {
             this.val = val;
         }
-        public string ToJson() {
-            return val.ToString();
+        public void AppendJson(StringBuilder sb) {
+            sb.Append(val);
         }
     }
 
@@ -74,18 +72,16 @@ namespace Assets.Sagiri {
             list.Clear();
         }
 
-        public string ToJson() {
-            var sb = new StringBuilder();
+        public void AppendJson(StringBuilder sb) {
             sb.Append("[");
             for (int i = 0; i < list.Count; i++) {
                 var r = list[i];
-                sb.Append(r.ToJson());
+                r.AppendJson(sb);
                 if (i < list.Count - 1) {
                     sb.Append(",");
                 }
             }
             sb.Append("]");
-            return sb.ToString();
         }
     }
 
@@ -114,18 +110,24 @@ namespace Assets.Sagiri {
             pairs.Clear();
         }
 
-        public string ToJson() {
-            var sb = new StringBuilder();
+        public void AppendJson(StringBuilder sb) {
             sb.Append("{");
             for(int i = 0; i < pairs.Count; i++) {
                 var p = pairs[i];
-                sb.AppendFormat(@"""{0}"":{1}", p.key, p.value.ToJson());
+
+                sb.Append("\"");
+                sb.Append(p.key);
+                sb.Append("\"");
+
+                sb.Append(":");
+
+                p.value.AppendJson(sb);
+
                 if(i < pairs.Count-1) {
                     sb.Append(",");
                 }
             }
             sb.Append("}");
-            return sb.ToString();
         }
     }
 }

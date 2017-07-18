@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Assets.Sagiri {
@@ -45,7 +46,9 @@ namespace Assets.Sagiri {
                     jsonBuilder.Add(r);
                 }
             }
-            var json = jsonBuilder.ToJson();
+            var sb = new StringBuilder();
+            jsonBuilder.AppendJson(sb);
+            var json = sb.ToString();
             context.Response.WriteString(json, "application/json");
         }
     }
