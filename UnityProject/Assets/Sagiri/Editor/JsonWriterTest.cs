@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 
 namespace Assets.Sagiri.Editor {
-    class JsonWriterTest {
+    class JsonStringTest {
         [Test]
-        public void ToJsonString_String_Test() {
+        public void FilterTest() {
             var cases = new[]
             {
                 new { a = "a\nb", b = @"a\nb" },
@@ -11,8 +11,8 @@ namespace Assets.Sagiri.Editor {
                 new { a = @"a""b", b = @"a\""b" },
                 new { a = @"a\b", b = @"a\\b" },
             };
-            foreach(var c in cases) {
-                var v = JsonWriter.ToJsonString(c.a);
+            foreach (var c in cases) {
+                var v = JsonString.Filter(c.a);
                 Assert.AreEqual(c.b, v);
             }
         }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 
 namespace Assets.Sagiri {
@@ -15,6 +13,8 @@ namespace Assets.Sagiri {
 
         static int nextUid = 1;
 
+        readonly JsonObject json;
+
         public LogEntry(string log, string stacktrace, LogType lv, DateTime time) {
             uid = nextUid;
             nextUid += 1;
@@ -23,49 +23,18 @@ namespace Assets.Sagiri {
             this.stacktrace = stacktrace;
             this.level = lv;
             this.time = time;
+
+            json = new JsonObject();
+            json["l"] = new JsonString(log);
+            json["t"] = new JsonString(level.ToString());
+            // "2016.09.24.04.23.04"
+            json["tm"] = new JsonString(time.ToString("yyyy.MM.dd.HH.mm.ss"));
+            json["s"] = new JsonString(stacktrace);
+            json["id"] = new JsonInt(uid);
         }
 
         public string ToJson() {
-            var sb = new StringBuilder();
-            sb.Append("{");
-            sb.AppendFormat(@"""id"":{0}", uid);
-            sb.Append(",");
-            // "2016.09.24.04.23.04"
-            sb.AppendFormat(@"""tm"":""{0}""", time.ToString("yyyy.MM.dd.HH.mm.ss"));
-            sb.Append(",");
-            sb.AppendFormat(@"""t"":""{0}""", level.ToString());
-            sb.Append(",");
-            sb.AppendFormat(@"""l"":""{0}""", JsonWriter.ToJsonString(log));
-            sb.Append(",");
-            sb.AppendFormat(@"""s"":""{0}""", JsonWriter.ToJsonString(stacktrace));
-            sb.Append("}");
-            return sb.ToString();
-        }
-    }
-
-    class LogEntryListJsonBuilder {
-        readonly List<LogEntry> list = new List<LogEntry>();
-
-        public void Clear() {
-            list.Clear();
-        }
-
-        public void Add(LogEntry e) {
-            list.Add(e);
-        }
-
-        public string Build() {
-            var sb = new StringBuilder();
-            sb.Append("[");
-            for (int i = 0; i < list.Count; i++) {
-                var r = list[i];
-                sb.Append(r.ToJson());
-                if (i < list.Count - 1) {
-                    sb.Append(",");
-                }
-            }
-            sb.Append("]");
-            return sb.ToString();
+            return json.ToJson();
         }
     }
 }

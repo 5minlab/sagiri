@@ -25,7 +25,7 @@ namespace Assets.Sagiri {
             Console.Log(logString, stackTrace, type, now);
         }
 
-        static readonly LogEntryListJsonBuilder jsonBuilder = new LogEntryListJsonBuilder();
+        static readonly JsonArray jsonBuilder = new JsonArray();
 
         // Our routes
         [Route("^/console/fetch$")]
@@ -45,7 +45,7 @@ namespace Assets.Sagiri {
                     jsonBuilder.Add(r);
                 }
             }
-            var json = jsonBuilder.Build();
+            var json = jsonBuilder.ToJson();
             context.Response.WriteString(json, "application/json");
         }
     }
