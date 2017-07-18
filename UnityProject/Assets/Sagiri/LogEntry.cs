@@ -4,7 +4,7 @@ using System.Text;
 using UnityEngine;
 
 namespace Assets.Sagiri {
-    struct LogEntry {
+    class LogEntry : IJsonSerializable {
         public readonly int uid;
 
         public readonly string log;
@@ -35,9 +35,9 @@ namespace Assets.Sagiri {
             sb.Append(",");
             sb.AppendFormat(@"""t"":""{0}""", level.ToString());
             sb.Append(",");
-            sb.AppendFormat(@"""l"":""{0}""", log.Replace("\n", "\\n"));
+            sb.AppendFormat(@"""l"":""{0}""", JsonWriter.ToJsonString(log));
             sb.Append(",");
-            sb.AppendFormat(@"""s"":""{0}""", stacktrace.Replace("\n", "\\n"));
+            sb.AppendFormat(@"""s"":""{0}""", JsonWriter.ToJsonString(stacktrace));
             sb.Append("}");
             return sb.ToString();
         }
