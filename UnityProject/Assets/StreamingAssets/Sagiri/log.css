@@ -68,6 +68,15 @@ button:active {
   overflow: auto;
 }
 
+#side-title a,
+#side-title a:visited {
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+#side-title,
 #systemInfo,
 #loadLog {
   margin: 0 0 10px 0;
