@@ -25,6 +25,10 @@ public class Main : MonoBehaviour {
             rightClickCount += 1;
             Debug.LogFormat("right click : {0}", rightClickCount);
         }
+
+        if(Input.GetKey(KeyCode.A)) {
+            Debug.LogFormat("key pressed : {0}", Time.time);
+        }
     }
 
     void PrintLog() {

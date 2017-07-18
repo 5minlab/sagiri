@@ -3,6 +3,7 @@ var mainPanel = document.getElementById('mainPanel');
 var searchBox = document.getElementById('search');
 var checkEvent = new CustomEvent('change', { checked: this.checked });
 var theSearchableElements = [];
+// TODO 100 is too small
 var maxToShowByDefault = 100;
 var largeFile = false;
 var title = document.getElementById('title');
@@ -192,6 +193,23 @@ function prependLog(log) {
     counts[type] = 1;
   } else {
     counts[type] = ++counts[type];
+  }
+
+  // 로그의 갯수가 너무 많아진거같으면 옛날 로그를 지운다
+  while(counts[type] > maxToShowByDefault) {
+    var childcount = mainPanel.children.length;
+    var found = null;
+    for(var i = childcount-1 ; i >= 0 ; i--) {
+      var el = mainPanel.children[i];
+      if(el.classList.contains(type)) {
+        found = el;
+        break;
+      }
+    }
+    if(found) {
+      mainPanel.removeChild(found);
+      counts[type]--;
+    }
   }
 
   var entry = document.createElement('div');
