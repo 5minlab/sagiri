@@ -6,5 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/main.unity
+    path: Assets/Sagiri/Examples/SagiriExample.unity
     guid: e46c92d691acdec41bc9921a9d711fb5

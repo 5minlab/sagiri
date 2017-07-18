@@ -27,6 +27,8 @@ namespace Assets.Sagiri.Editor {
             {
                 "Assets/Sagiri",
                 "Assets/Sagiri/Prefabs",
+                "Assets/Sagiri/Examples",
+                "Assets/Sagiri/Editor",
             };
             var founds = AssetDatabase.FindAssets("", dirs.ToArray());
             var set = new HashSet<string>();
