@@ -2,7 +2,7 @@
 
 CURR_DIR=`pwd`
 UNITY_PATH="/Applications/Unity/Unity.app/Contents/MacOS/Unity"
-PROJ_PATH=$CURR_DIR/UnityProject
+PROJ_PATH=$CURR_DIR/UnityProject_Sagiri
 EXPORT_DIR=$CURR_DIR/dist
 METHOD=Assets.Sagiri.Editor.EntryPoint.ExportPackage
 PACKAGE_NAME=minamo.unitypackage
