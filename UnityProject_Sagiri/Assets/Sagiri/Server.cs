@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using UnityEngine;
@@ -33,12 +35,25 @@ namespace Assets.Sagiri {
 
 
     public class Server : MonoBehaviour {
+        [SerializeField]
+        int portCandidate = 55055;
 
         [SerializeField]
-        public int Port = 55055;
+        [ShowOnly]
+        int _port = -1;
+        public int Port
+        {
+            get { return _port; }
+            private set { _port = value; }
+        }
+
+        public string Host { get { return Network.player.ipAddress; } }
 
         [SerializeField]
         public bool RegisterLogCallback = false;
+
+        [SerializeField]
+        bool showGUI = true;
 
         private static Thread mainThread;
         private static string fileRoot;
@@ -67,13 +82,32 @@ namespace Assets.Sagiri {
             fileRoot = Path.Combine(Application.streamingAssetsPath, "Sagiri");
 
             // Start server
-            Debug.Log("Starting Sagiri Server on " + Network.player.ipAddress + ":" + Port);
-            listener = new HttpListener();
-            listener.Prefixes.Add("http://*:" + Port + "/");
-            listener.Start();
-            listener.BeginGetContext(ListenerCallback, null);
+            // 이전에 사용한 서버에 문제가 생겨서 포트번호를 다시 쓸수 없을지 모른다
+            // 그러면 다음 포트번호로 접속을 시도해보자
+            var success = false;
+            for(int i = 0; i < 100; i++) {
+                var portNum = portCandidate + i;
+                try {
+                    listener = new HttpListener();
+                    listener.Prefixes.Add("http://*:" + portNum + "/");
+                    listener.Start();
+                    listener.BeginGetContext(ListenerCallback, null);
+                    Debug.Log("Starting Sagiri Server on " + Network.player.ipAddress + ":" + portNum);
 
-            StartCoroutine(HandleRequests());
+                    success = true;
+                    Port = portNum;
+                    StartCoroutine(HandleRequests());
+                    break;
+
+                } catch (SocketException e) {
+                    Debug.LogException(e, this);
+                    Debug.LogFormat(this, "Cannot use Port {0}, use next port", portNum);
+                }
+            }
+
+            if(!success) {
+                Debug.Log("Cannot execute Sagiri server");
+            }
         }
 
         public void OnApplicationPause(bool paused) {
@@ -86,8 +120,10 @@ namespace Assets.Sagiri {
         }
 
         public virtual void OnDestroy() {
+            listener.Stop();
             listener.Close();
             listener = null;
+            Port = -1;
         }
 
         private void RegisterRoutes() {
@@ -207,6 +243,24 @@ namespace Assets.Sagiri {
 
         void Update() {
             Shell.Update();
+        }
+
+        string hostAndPort = "";
+        private void OnGUI() {
+            if(!showGUI) { return; }
+
+            if (hostAndPort == "" && Port > 0) {
+                var sb = new StringBuilder();
+                sb.Append("Sagiri Server ");
+                sb.Append(Host);
+                sb.Append(":");
+                sb.Append(Port);
+                hostAndPort = sb.ToString();
+            }
+
+            if(hostAndPort.Length > 0) {
+                GUI.Label(new Rect(0, 0, 400, 100), hostAndPort);
+            }
         }
 
         void ListenerCallback(IAsyncResult result) {
