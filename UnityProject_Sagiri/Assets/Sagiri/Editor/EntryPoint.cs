@@ -51,7 +51,13 @@ namespace Assets.Sagiri.Editor {
             if (streamingAssetsPath == null || !Directory.Exists(streamingAssetsPath))
                 return;
 
-            Directory.Delete(streamingAssetsPath, true);
+            var sagiriPath = Path.Combine(streamingAssetsPath, "Sagiri");
+            Directory.Delete(sagiriPath, true);
+
+            var contents = Directory.GetFileSystemEntries(streamingAssetsPath);
+            if(contents.Length == 0) {
+                Directory.Delete(streamingAssetsPath, true);
+            }
         }
     }
 }
