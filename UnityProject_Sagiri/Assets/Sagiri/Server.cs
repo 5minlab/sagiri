@@ -320,7 +320,8 @@ namespace Assets.Sagiri {
         IEnumerator HandleRequests() {
             while (true) {
                 while (mainRequests.Count == 0) {
-                    yield return new WaitForEndOfFrame();
+                    // yield return new WaitForEndOfFrame();
+                    yield return null;
                 }
 
                 RequestContext context = null;
