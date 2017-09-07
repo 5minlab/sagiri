@@ -12,6 +12,10 @@ using System.Threading;
 using UnityEngine;
 
 namespace Assets.Sagiri {
+#if NETFX_CORE
+    public class RequestContext {
+    }
+#else
     public class RequestContext {
         public HttpListenerContext context;
         public Match match;
@@ -32,8 +36,9 @@ namespace Assets.Sagiri {
             currentRoute = 0;
         }
     }
+#endif
 
-
+#if !NETFX_CORE
     public class Server : MonoBehaviour {
         [SerializeField]
         int portCandidate = 55055;
@@ -47,7 +52,17 @@ namespace Assets.Sagiri {
             private set { _port = value; }
         }
 
-        public string Host { get { return Network.player.ipAddress; } }
+        public string Host
+        {
+            get
+            {
+#if UNITY_WSA
+                return "127.0.0.1";
+#else
+                return Network.player.ipAddress;
+#endif
+            }
+        }
 
         [SerializeField]
         public bool RegisterLogCallback = false;
@@ -92,7 +107,7 @@ namespace Assets.Sagiri {
                     listener.Prefixes.Add("http://*:" + portNum + "/");
                     listener.Start();
                     listener.BeginGetContext(ListenerCallback, null);
-                    Debug.Log("Starting Sagiri Server on " + Network.player.ipAddress + ":" + portNum);
+                    Debug.Log("Starting Sagiri Server on " + Host + ":" + portNum);
 
                     success = true;
                     Port = portNum;
@@ -333,4 +348,5 @@ namespace Assets.Sagiri {
             }
         }
     }
+#endif
 }

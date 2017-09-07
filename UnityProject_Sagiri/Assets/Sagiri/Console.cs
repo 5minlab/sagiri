@@ -28,6 +28,7 @@ namespace Assets.Sagiri {
 
         static readonly JsonArray jsonBuilder = new JsonArray();
 
+#if !NETFX_CORE
         // Our routes
         [Route("^/console/fetch$")]
         public static void FetchLog(RequestContext context) {
@@ -51,5 +52,6 @@ namespace Assets.Sagiri {
             var json = sb.ToString();
             context.Response.WriteString(json, "application/json");
         }
+#endif
     }
 }

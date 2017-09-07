@@ -2,6 +2,7 @@
 using System.Net;
 
 namespace Assets.Sagiri {
+#if !NETFX_CORE
     public static class ResponseExtension {
         public static void WriteString(this HttpListenerResponse response, string input, string type = "text/plain") {
             response.StatusCode = (int)HttpStatusCode.OK;
@@ -41,5 +42,5 @@ namespace Assets.Sagiri {
             }
         }
     }
-
+#endif
 }

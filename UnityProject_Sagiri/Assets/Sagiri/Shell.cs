@@ -110,6 +110,7 @@ namespace Assets.Sagiri {
         }
 
         private void RegisterAttributes() {
+#if !NETFX_CORE
             foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies()) {
                 // HACK: IL2CPP crashes if you attempt to get the methods of some classes in these assemblies.
                 if (assembly.FullName.StartsWith("System") || assembly.FullName.StartsWith("mscorlib")) {
@@ -150,9 +151,10 @@ namespace Assets.Sagiri {
                     }
                 }
             }
+#endif
         }
 
-
+#if !NETFX_CORE
         /* Clear all output from console */
         [Command("clear", "clears console output", false)]
         public static void Clear() {
@@ -207,7 +209,6 @@ namespace Assets.Sagiri {
 
             context.Response.WriteString(found);
         }
+#endif
     }
-
-
 }

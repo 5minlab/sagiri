@@ -44,9 +44,9 @@ namespace Assets.Sagiri.Examples {
      *
      */
     public static class GameObjectRoutes {
-
         [Route("^/object/list.json$", @"(GET|HEAD)", true)]
         public static void ListGameObjects(RequestContext context) {
+#if !NETFX_CORE
             string json = "[";
             Object[] objects = Object.FindObjectsOfType(typeof(GameObject));
             foreach (Object obj in objects) {
@@ -56,6 +56,7 @@ namespace Assets.Sagiri.Examples {
             json = json.TrimEnd(new char[] { ',', ' ' }) + "]";
 
             context.Response.WriteString(json, "application/json");
+#endif
         }
     }
 }
