@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -37,9 +37,14 @@ namespace Assets.Sagiri.Editor {
                         streamingAssetsPath = Path.Combine(root, "StreamingAssets");
                     }
                     break;
+#if UNITY_2017_3_OR_NEWER
+                case BuildTarget.StandaloneOSX:
+#else
                 case BuildTarget.StandaloneOSXIntel:
                 case BuildTarget.StandaloneOSXIntel64:
-                case BuildTarget.StandaloneOSXUniversal: {
+                case BuildTarget.StandaloneOSXUniversal:
+#endif
+                    {
                         streamingAssetsPath = Path.Combine(pathToBuiltProject, "Contents");
                         streamingAssetsPath = Path.Combine(streamingAssetsPath, "Resources");
                         streamingAssetsPath = Path.Combine(streamingAssetsPath, "Data");
