@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +42,9 @@ namespace Assets.Sagiri {
     public class Server : MonoBehaviour {
         [SerializeField]
         int portCandidate = 55055;
+
+        [SerializeField]
+        int maxRetryCount = 10;
 
         [SerializeField]
         [ShowOnly]
@@ -100,7 +103,7 @@ namespace Assets.Sagiri {
             // 이전에 사용한 서버에 문제가 생겨서 포트번호를 다시 쓸수 없을지 모른다
             // 그러면 다음 포트번호로 접속을 시도해보자
             var success = false;
-            for(int i = 0; i < 100; i++) {
+            for(int i = 0; i < maxRetryCount; i++) {
                 var portNum = portCandidate + i;
                 try {
                     listener = new HttpListener();
