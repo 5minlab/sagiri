@@ -40,11 +40,19 @@ namespace Assets.Sagiri {
 
 #if !NETFX_CORE
     public class Server : MonoBehaviour {
+        /// <summary>
+        /// allow only one server object
+        /// </summary>
+        static Server s_instance = null;
+
         [SerializeField]
         int portCandidate = 55055;
 
         [SerializeField]
         int maxRetryCount = 10;
+
+        [SerializeField]
+        bool dontDestroyOnLoad = false;
 
         [SerializeField]
         [ShowOnly]
@@ -96,6 +104,18 @@ namespace Assets.Sagiri {
         };
 
         public virtual void Awake() {
+            // check singleton
+            if(s_instance == null) {
+                s_instance = this;
+            } else {
+                GameObject.Destroy(gameObject);
+                return;
+            }
+
+            if(dontDestroyOnLoad) {
+                DontDestroyOnLoad(gameObject);
+            }
+
             mainThread = Thread.CurrentThread;
             fileRoot = Path.Combine(Application.streamingAssetsPath, "Sagiri");
 
@@ -138,6 +158,10 @@ namespace Assets.Sagiri {
         }
 
         public virtual void OnDestroy() {
+            if(s_instance == this) {
+                s_instance = null;
+            }
+
             listener.Stop();
             listener.Close();
             listener = null;
