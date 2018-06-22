@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 /*
 * https://github.com/5minlab/minamo/blob/master/UnityProject/Assets/Minamo/Editor/EnvironmentReader.cs
@@ -34,7 +34,7 @@ namespace Assets.Sagiri.Editor {
                     val = int.Parse(s);
                     return true;
 
-                } catch (FormatException e) {
+                } catch (FormatException) {
                     val = 0;
                     return false;
                 }

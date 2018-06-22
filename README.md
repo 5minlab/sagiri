@@ -21,6 +21,18 @@ Use [Unity-File-Debug][Unity-File-Debug] as log viewer.
 2. Move the prefab `SagiriServer` into your scene
 3. Set the port on `SagiriServer` game object. (default value is 55055)
 4. Run the game and connect to http://localhost:55055 with your browser.
+(you can find address in unity game screen)
+5. If you want to view log in unity build, check `Development build` flag.
+or comment this code block.
+
+```
+[PostProcessBuild(1)]
+public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject) {
+	if (!Debug.isDebugBuild) {
+		//EntryPoint.RemoveSteamingAssets(target, pathToBuiltProject);
+	}
+}
+```
 
 ## Example
 open scene, `Sagiri/Examples/SagiriExample`
