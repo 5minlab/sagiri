@@ -1,4 +1,5 @@
-﻿using Assets.Sagiri.Editor;
+﻿#if UNITY_EDITOR
+using Assets.Sagiri.Editor;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEngine;
@@ -13,3 +14,4 @@ namespace Assets.Sagiri.Examples.Editor {
         }
     }
 }
+#endif

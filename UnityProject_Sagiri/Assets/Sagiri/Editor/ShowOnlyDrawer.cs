@@ -1,7 +1,8 @@
-﻿namespace Assets.Sagiri.Editor {
-    using UnityEditor;
-    using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+using UnityEngine;
 
+namespace Assets.Sagiri.Editor {
     [CustomPropertyDrawer(typeof(ShowOnlyAttribute))]
     public class ShowOnlyDrawer : PropertyDrawer {
         public override void OnGUI(Rect position, SerializedProperty prop, GUIContent label) {
@@ -29,3 +30,4 @@
         }
     }
 }
+#endif
