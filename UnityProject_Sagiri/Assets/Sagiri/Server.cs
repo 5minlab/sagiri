@@ -70,7 +70,11 @@ namespace Assets.Sagiri {
 #if UNITY_WSA
                 return "127.0.0.1";
 #else
-                return Network.player.ipAddress;
+                // error CS0619: `UnityEngine.Network' is obsolete: `
+                // The legacy networking system has been removed in Unity 2018.2.
+                // Use Unity Multiplayer and NetworkIdentity instead.'
+                // return Network.player.ipAddress;
+                return "127.0.0.1";
 #endif
             }
         }

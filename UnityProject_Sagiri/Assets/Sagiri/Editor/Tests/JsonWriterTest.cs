@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
+using Assets.Sagiri.Editor;
 
-namespace Assets.Sagiri.Editor {
+namespace Assets.Sagiri.Editor.Tests {
     class JsonStringTest {
         [Test]
         public void FilterTest() {
